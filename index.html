@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grompt | AI Prompt Engineering</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="particles-js"></div>
+  
+  <div class="page-layout">
+    <!-- Left Sidebar -->
+    <aside class="sidebar-left">
+      <div class="ad-container ad-skyscraper" id="ad-left-sky"></div>
+    </aside>
+    
+    <!-- Main Content -->
+    <div class="app-container">
+      <!-- Add leaderboard above the fold -->
+      <div class="ad-container ad-leaderboard" id="ad-top-leader"></div>
+      
+      <header class="app-header">
+        <div class="logo-container">
+          <svg class="logo" viewBox="0 0 150 50">
+            <text x="10" y="35" class="logo-text">Grompt</text>
+          </svg>
+          <div class="logo-glow"></div>
+        </div>
+        <p class="tagline">AI to ask AI</p>
+      </header>
+      
+      <main>
+        <div class="input-section">
+          <div class="glass-card">
+            <label for="prompt-idea">Describe your idea in 1-2 lines</label>
+            <textarea id="prompt-idea" placeholder="Enter you ideal prompt here..."></textarea>
+            <button id="generate-btn" class="glow-btn">
+              <span>Generate Master Prompt</span>
+              <div class="btn-glow"></div>
+            </button>
+          </div>
+        </div>
+        
+        <div class="output-section hidden" id="output-section">
+          <div class="glass-card terminal">
+            <div class="terminal-header">
+              <span>Generated Prompt</span>
+              <button id="copy-btn" class="icon-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              </button>
+            </div>
+            <div class="terminal-content" id="output-content"></div>
+          </div>
+        </div>
+
+        <div class="loading-animation hidden" id="loading-animation">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+      </main>
+      
+      <div class="history-section">
+        <div class="glass-pill interactive-pill">
+          <span class="pill-icon">↻</span>
+          <span class="pill-text">History</span>
+        </div>
+      </div>
+      
+      <!-- Add leaderboard below the fold -->
+      <div class="ad-container ad-leaderboard" id="ad-bottom-leader"></div>
+    </div>
+    
+    <!-- Right Sidebar -->
+    <aside class="sidebar-right">
+      <div class="ad-container ad-skyscraper" id="ad-right-sky"></div>
+      <div class="ad-container ad-rectangle" id="ad-right-rect"></div>
+    </aside>
+  </div>
+
+  <div id="toast" class="toast hidden">
+    <div class="toast-content">
+      <span id="toast-message"></span>
+    </div>
+  </div>
+  
+  <div id="splash-screen">
+    <div class="splash-content">
+      <div class="splash-logo-container">
+        <svg class="splash-logo" viewBox="0 0 150 60" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="splash-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#8860ff" class="gradient-stop-1"/>
+              <stop offset="40%" stop-color="#6e56cf" class="gradient-stop-2"/>
+              <stop offset="100%" stop-color="#ab67ff" class="gradient-stop-3"/>
+            </linearGradient>
+          </defs>
+          <text id="splash-logo-text" x="75" y="30" text-anchor="middle" dominant-baseline="middle" 
+                font-family="'Fira Code', monospace" font-weight="700" font-size="48" 
+                fill="url(#splash-gradient)" letter-spacing="-0.2px">GROMPT</text>
+        </svg>
+        <div class="splash-glow"></div>
+      </div>
+      <div class="splash-tagline">AI to ask AI</div>
+      <div class="splash-neurons"></div>
+      <div class="splash-loading">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html> 
