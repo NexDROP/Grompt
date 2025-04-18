@@ -894,7 +894,7 @@ Your expertise allows you to:
 
   // Ad System Implementation
   function initializeAdSystem() {
-    // Ad slots configuration
+    // Ad slots configuration - removed rectangle entry
     const adSlots = {
       'ad-left-sky': {
         format: 'skyscraper',
@@ -905,22 +905,8 @@ Your expertise allows you to:
         format: 'skyscraper',
         sizes: ['160x600'],
         rotation: 60000, // 60 seconds rotation
-      },
-      'ad-right-rect': {
-        format: 'rectangle',
-        sizes: ['300x250'],
-        rotation: 30000, // 30 seconds rotation
-      },
-      'ad-top-leader': {
-        format: 'leaderboard',
-        sizes: ['728x90', '300x250'], // Responsive options
-        rotation: 40000, // 40 seconds rotation
-      },
-      'ad-bottom-leader': {
-        format: 'leaderboard',
-        sizes: ['728x90', '300x250'], // Responsive options
-        rotation: 50000, // 50 seconds rotation
       }
+      // Removed rectangle ad entry
     };
 
     // Adsterra ad codes (replace with your actual ad codes)
