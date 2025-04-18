@@ -1551,18 +1551,9 @@ body:has(.custom-cursor.active) {
 
 /* Add this to styles.css to create a container for main content and sidebars */
 .page-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 160px) minmax(0, 900px) minmax(0, 160px);
   width: 100%;
-  max-width: 1300px;
+  max-width: 900px; /* Match your original content width */
   margin: 0 auto;
-  gap: 20px;
-}
-
-.sidebar-left, .sidebar-right {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
 }
 
 .ad-container {
