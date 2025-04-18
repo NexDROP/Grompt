@@ -912,8 +912,8 @@ Your expertise allows you to:
     // Adsterra ad codes (replace with your actual ad codes)
     const adsterraScripts = {
       'skyscraper': [
-        '<script type="text/javascript">atOptions = { /* your Adsterra options for 160x600 */ }; document.write(\'<scr\' + \'ipt type="text/javascript" src="http://www.example.com/adsterra/skyscraper1.js"></scr\' + \'ipt>\');</script>',
-        '<script type="text/javascript">atOptions = { /* your Adsterra options for 160x600 alt */ }; document.write(\'<scr\' + \'ipt type="text/javascript" src="http://www.example.com/adsterra/skyscraper2.js"></scr\' + \'ipt>\');</script>',
+        '<script type="text/javascript">atOptions = {\'key\' : \'b45edc51a410bff54e36fd8f707bf4eb\',\'format\' : \'iframe\',\'height\' : 300,\'width\' : 160,\'params\' : {}};</script><script type="text/javascript" src="//www.highperformanceformat.com/b45edc51a410bff54e36fd8f707bf4eb/invoke.js"></script>',
+        '<script type="text/javascript">atOptions = {\'key\' : \'b45edc51a410bff54e36fd8f707bf4eb\',\'format\' : \'iframe\',\'height\' : 300,\'width\' : 160,\'params\' : {}};</script><script type="text/javascript" src="//www.highperformanceformat.com/b45edc51a410bff54e36fd8f707bf4eb/invoke.js"></script>',
       ],
       'rectangle': [
         '<script type="text/javascript">atOptions = { /* your Adsterra options for 300x250 */ }; document.write(\'<scr\' + \'ipt type="text/javascript" src="http://www.example.com/adsterra/rectangle1.js"></scr\' + \'ipt>\');</script>',
