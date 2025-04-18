@@ -1600,7 +1600,7 @@ body:has(.custom-cursor.active) {
 .ad-skyscraper {
   position: sticky;
   top: 20px;
-  height: 600px;
+  height: 300px;
   width: 160px;
 }
 
