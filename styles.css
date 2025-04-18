@@ -1598,21 +1598,18 @@ body:has(.custom-cursor.active) {
 }
 
 .ad-skyscraper {
-  height: 600px;
-  width: 160px;
   position: sticky;
   top: 20px;
+  height: 600px;
+  width: 160px;
 }
 
 .ad-rectangle {
-  height: 250px;
-  width: 300px;
+  display: none;
 }
 
 .ad-leaderboard {
-  height: 90px;
-  width: 728px;
-  margin: 20px auto;
+  display: none;
 }
 
 /* Responsive adjustments */
@@ -1665,6 +1662,7 @@ body:has(.custom-cursor.active) {
 /* Ensure content remains centered on small screens */
 @media (max-width: 1100px) {
   .app-container {
-    margin: 0 auto;
+    margin: 20px auto;
+    padding: 0 15px;
   }
 } 
