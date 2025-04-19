@@ -276,12 +276,10 @@ textarea:focus {
 
 .terminal-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.4rem;
-  background: rgba(30, 30, 35, 0.7);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
+  justify-content: space-between;
+  padding: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .terminal-content {
@@ -1655,5 +1653,416 @@ body:has(.custom-cursor.active) {
   .app-container {
     margin: 20px auto;
     padding: 0 15px;
+  }
+}
+
+/* Prompt Scoring Feature Styles */
+.score-button {
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.score-button svg {
+  stroke: white;
+}
+
+.score-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.score-modal.show {
+  opacity: 1;
+}
+
+.score-modal.fade-out {
+  opacity: 0;
+}
+
+.score-modal .modal-content {
+  width: 90%;
+  max-width: 550px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 16px;
+  background: rgba(25, 25, 35, 0.7);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  transform: translateY(20px);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.score-modal.show .modal-content {
+  transform: translateY(0);
+}
+
+.score-modal .modal-header {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.score-modal .modal-header h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  background: linear-gradient(135deg, #a669ff, #79e0ee);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+}
+
+.score-circle-bg {
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 6;
+}
+
+.score-circle-progress {
+  stroke: url(#scoreGradient);
+  stroke-width: 6;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dasharray 1s ease;
+}
+
+/* Add this SVG definition to the document */
+#score-gradient-def {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.score-overview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 25px;
+}
+
+.score-chart {
+  width: 120px;
+  height: 120px;
+}
+
+.score-circle {
+  width: 100%;
+  height: 100%;
+}
+
+.score-text {
+  font-size: 24px;
+  font-weight: bold;
+  fill: white;
+}
+
+.score-rating {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.rating {
+  padding: 5px 12px;
+  border-radius: 20px;
+}
+
+.rating.perfect {
+  background: linear-gradient(135deg, #43cea2, #185a9d);
+  color: white;
+}
+
+.rating.good {
+  background: linear-gradient(135deg, #4776E6, #8E54E9);
+  color: white;
+}
+
+.rating.fair {
+  background: linear-gradient(135deg, #f7b733, #fc4a1a);
+  color: white;
+}
+
+.rating.poor {
+  background: linear-gradient(135deg, #cb2d3e, #ef473a);
+  color: white;
+}
+
+.score-breakdown {
+  margin-bottom: 25px;
+}
+
+.score-breakdown h3, .improvement-tips h3 {
+  font-size: 1.1rem;
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+}
+
+.breakdown-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.breakdown-label {
+  width: 100px;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.breakdown-bar {
+  flex-grow: 1;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 0 10px;
+}
+
+.breakdown-progress {
+  height: 100%;
+  background: linear-gradient(to right, #a669ff, #79e0ee);
+  border-radius: 4px;
+  transition: width 1s ease;
+  width: 0;
+}
+
+.breakdown-value {
+  width: 30px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-align: right;
+}
+
+.improvement-tips ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.improvement-tips li {
+  margin-bottom: 10px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.95rem;
+}
+
+/* SVG gradient definition - add to body */
+body:not(:has(#scoreGradient)) {
+  position: relative;
+}
+
+body:not(:has(#scoreGradient))::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+body:not(:has(#scoreGradient))::after {
+  content: '<svg width="0" height="0"><defs><linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#a669ff" /><stop offset="100%" stop-color="#79e0ee" /></linearGradient></defs></svg>';
+}
+
+@media (max-width: 768px) {
+  .score-overview {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .score-chart {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .breakdown-label {
+    width: 80px;
+  }
+}
+
+/* Simplified Comparison Modal Styles */
+.simplified-comparison {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.comparison-columns {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+
+.comparison-column {
+  flex: 1;
+  padding: 20px;
+  border-radius: 12px;
+  background: rgba(30, 30, 40, 0.5);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.comparison-column.winner {
+  background: rgba(40, 40, 60, 0.7);
+  border: 1px solid rgba(110, 86, 207, 0.4);
+  box-shadow: 0 0 15px rgba(110, 86, 207, 0.2);
+  transform: scale(1.03);
+}
+
+.comparison-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  position: relative;
+}
+
+.vs-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6e56cf, #a277ff);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.column-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.score-badge {
+  background: rgba(110, 86, 207, 0.2);
+  color: #a277ff;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.strength-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.strength-list li {
+  margin-bottom: 8px;
+  font-size: 15px;
+  position: relative;
+  padding-left: 12px;
+  border-left: 2px solid rgba(110, 86, 207, 0.6);
+}
+
+.strength-list .neutral {
+  opacity: 0.7;
+  border-left-color: rgba(255, 255, 255, 0.2);
+}
+
+.recommendation-bar {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  background: rgba(30, 30, 40, 0.5);
+  border-radius: 10px;
+  border-left: 4px solid #a277ff;
+}
+
+.recommendation-bar.ai {
+  border-left-color: #7f5bff;
+}
+
+.recommendation-bar.original {
+  border-left-color: #43cea2;
+}
+
+.recommendation-icon {
+  font-size: 20px;
+  margin-right: 15px;
+}
+
+.recommendation-text {
+  font-size: 15px;
+}
+
+.view-details-wrapper {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.view-details-btn, .view-prompts-btn, .back-summary-btn {
+  background: rgba(110, 86, 207, 0.1);
+  border: 1px solid rgba(110, 86, 207, 0.3);
+  color: rgba(255, 255, 255, 0.9);
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.view-details-btn:hover, .view-prompts-btn:hover, .back-summary-btn:hover {
+  background: rgba(110, 86, 207, 0.2);
+  border-color: rgba(110, 86, 207, 0.5);
+}
+
+.back-to-summary {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .comparison-columns {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .comparison-column.winner {
+    transform: scale(1);
+  }
+  
+  .comparison-divider {
+    height: 40px;
+    width: 100%;
+    margin: 5px 0;
   }
 } 
