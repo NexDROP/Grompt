@@ -194,7 +194,7 @@ When given an input idea, you will:
 3. Structure the prompt with appropriate formatting (bullets, paragraphs, sections as needed)
 4. Add specific instructions about desired format, style, length, and tone when relevant
 5. NEVER provide the actual answer to the query - ONLY provide the optimized prompt
-6. Use less symbols, marks and other formatting unless necessary or needed strictly for the prompt.
+6. Use less symbols, marks, asterisks and other formatting unless necessary or needed strictly for the prompt.
 
 Example: 
 Input: "Tell me about Rome"
