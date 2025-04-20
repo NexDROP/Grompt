@@ -194,6 +194,7 @@ When given an input idea, you will:
 3. Structure the prompt with appropriate formatting (bullets, paragraphs, sections as needed)
 4. Add specific instructions about desired format, style, length, and tone when relevant
 5. NEVER provide the actual answer to the query - ONLY provide the optimized prompt
+6. Use less symbols, marks and other formatting unless necessary or needed strictly for the prompt.
 
 Example: 
 Input: "Tell me about Rome"
@@ -341,107 +342,393 @@ Respond ONLY with the optimized prompt. No explanations, no commentary, no intro
     }, 1000);
   }
   
-  // Improve the comparison results display function
+  // Update the calculatePromptScore function with more sophisticated metrics
+  function calculatePromptScore(promptText) {
+    const metrics = {
+      precision: calculatePrecision(promptText),         // How specific and unambiguous 
+      structure: calculateStructure(promptText),         // Organization and formatting
+      context: calculateContext(promptText),             // Background information provided
+      instruction: calculateInstruction(promptText),     // Clarity of requested action
+      constraints: calculateConstraints(promptText)      // Limitations and requirements
+    };
+    
+    // Calculate final score (weighted average)
+    const totalScore = Math.round(
+      (metrics.precision * 0.25) +
+      (metrics.structure * 0.20) +
+      (metrics.context * 0.15) +
+      (metrics.instruction * 0.25) +
+      (metrics.constraints * 0.15)
+    );
+    
+    return {
+      score: totalScore,
+      breakdown: metrics
+    };
+  }
+
+  // More detailed evaluation functions for each metric
+  function calculatePrecision(text) {
+    // Evaluate specificity and unambiguity
+    const words = text.split(/\s+/).filter(w => w.length > 0);
+    
+    // Calculate precision based on specific terms, numerical data, etc.
+    let score = 65; // Base score
+    
+    // Check for specific details
+    if (/\d+/.test(text)) score += 5; // Contains numbers
+    if (/\b(specifically|exactly|precisely|in particular|clearly defined)\b/i.test(text)) score += 8;
+    if (/\b(avoid|do not|refrain from|exclude|must not)\b/i.test(text)) score += 7; // Negative constraints
+    
+    // Check for specificity markers
+    const specificityMarkers = [
+      /\b(detailed|specific|explicit|concrete|particular)\b/i,
+      /\b(for example|such as|specifically|including|in particular)\b/i,
+      /\b(exactly|precisely|only|exclusively)\b/i
+    ];
+    
+    specificityMarkers.forEach(marker => {
+      if (marker.test(text)) score += 5;
+    });
+    
+    // Penalize vague language
+    const vagueTerms = [
+      /\b(maybe|perhaps|somehow|something|anything|whatever|sometime)\b/i,
+      /\b(good|nice|great|interesting|cool)\b/i,
+      /\b(stuff|things|aspects|details|features)\b/i
+    ];
+    
+    vagueTerms.forEach(term => {
+      if (term.test(text)) score -= 7;
+    });
+    
+    return Math.min(100, Math.max(0, Math.round(score)));
+  }
+
+  function calculateStructure(text) {
+    // Evaluate organization and formatting
+    let score = 70; // Base score
+    
+    // Check for structural elements
+    if (/\d+\.\s/.test(text)) score += 10; // Numbered lists
+    if (/\n-\s/.test(text)) score += 8; // Bullet points
+    if (/\n\n/.test(text)) score += 5; // Paragraph breaks
+    
+    // Check for section headers
+    if (/\b(introduction|background|context|summary|conclusion):/i.test(text)) score += 8;
+    
+    // Check for formatting instructions
+    if (/\b(format|structure|organize|layout|presentation)\b/i.test(text)) score += 6;
+    
+    // Check for hierarchical organization
+    const sections = text.split(/\n\s*\n/);
+    if (sections.length >= 3) score += 5;
+    
+    return Math.min(100, Math.max(0, Math.round(score)));
+  }
+
+  function calculateContext(text) {
+    // Evaluate background information
+    let score = 60; // Base score
+    
+    // Check for context provision
+    if (/\b(context|background|history|situation|scenario)\b/i.test(text)) score += 10;
+    
+    // Check for domain specification
+    const domains = [
+      /\b(scientific|academic|research|technical|educational)\b/i,
+      /\b(business|professional|corporate|commercial|industry)\b/i,
+      /\b(creative|artistic|narrative|storytelling|entertainment)\b/i,
+      /\b(medical|healthcare|clinical|patient|treatment)\b/i,
+      /\b(legal|regulatory|compliance|policy|governance)\b/i
+    ];
+    
+    domains.forEach(domain => {
+      if (domain.test(text)) score += 8;
+    });
+    
+    // Check for audience specification
+    if (/\b(audience|reader|user|viewer|customer|target)\b/i.test(text)) score += 8;
+    
+    // Check for purpose clarification
+    if (/\b(purpose|goal|objective|aim|intended|meant to)\b/i.test(text)) score += 7;
+    
+    return Math.min(100, Math.max(0, Math.round(score)));
+  }
+
+  function calculateInstruction(text) {
+    // Evaluate clarity of requested action
+    let score = 65; // Base score
+    
+    // Check for clear action verbs
+    const actionVerbs = [
+      /\b(create|generate|produce|develop|write)\b/i,
+      /\b(analyze|evaluate|assess|examine|investigate)\b/i,
+      /\b(explain|describe|elaborate|clarify|illustrate)\b/i,
+      /\b(compare|contrast|differentiate|distinguish|relate)\b/i,
+      /\b(summarize|condense|distill|abbreviate|outline)\b/i
+    ];
+    
+    let verbCount = 0;
+    actionVerbs.forEach(verb => {
+      if (verb.test(text)) {
+        score += 5;
+        verbCount++;
+      }
+    });
+    
+    // Bonus for beginning with a clear instruction
+    if (actionVerbs.some(verb => new RegExp('^' + verb.source, 'i').test(text.trim()))) {
+      score += 10;
+    }
+    
+    // Check for output format specification
+    if (/\b(format|structure|organize|layout|present)\b/i.test(text)) score += 7;
+    
+    // Check for clear task delineation
+    if (/\b(task|assignment|job|request|instruction)\b/i.test(text)) score += 5;
+    
+    return Math.min(100, Math.max(0, Math.round(score)));
+  }
+
+  function calculateConstraints(text) {
+    // Evaluate limitations and requirements
+    let score = 50; // Base score
+    
+    // Check for explicit constraints
+    if (/\b(must|should|need to|required to|have to)\b/i.test(text)) score += 10;
+    if (/\b(limited to|maximum|minimum|at least|at most)\b/i.test(text)) score += 10;
+    if (/\b(within|between|range|from|to)\b/i.test(text)) score += 5;
+    
+    // Check for quantitative constraints
+    if (/\b(\d+\s*(words|characters|sentences|paragraphs|pages|sections))\b/i.test(text)) score += 15;
+    
+    // Check for qualitative constraints
+    if (/\b(tone|style|voice|language|vocabulary)\b/i.test(text)) score += 8;
+    if (/\b(formal|informal|technical|simple|complex|conversational|professional)\b/i.test(text)) score += 7;
+    
+    // Check for exclusion instructions
+    if (/\b(avoid|do not|refrain from|exclude|omit)\b/i.test(text)) score += 10;
+    
+    return Math.min(100, Math.max(0, Math.round(score)));
+  }
+
+  // Update the displayComparisonResults function with a more premium design
   function displayComparisonResults(originalPrompt, generatedPrompt, originalCriteria, generatedCriteria, recommendation, reason) {
     // Create modal for comparison
     const modal = document.createElement('div');
-    modal.className = 'modal comparison-modal';
+    modal.className = 'modal comparison-modal premium-modal';
+    
+    // Calculate the total scores based on new metrics
+    const originalScore = calculatePromptScore(originalPrompt);
+    const generatedScore = calculatePromptScore(generatedPrompt);
+    
+    // Calculate individual criteria scores on a 0-100 scale
+    const originalMetrics = originalScore.breakdown;
+    const generatedMetrics = generatedScore.breakdown;
     
     // Calculate total scores
-    const originalTotal = originalCriteria.clarity + originalCriteria.specificity + originalCriteria.relevance;
-    const generatedTotal = generatedCriteria.clarity + generatedCriteria.specificity + generatedCriteria.relevance;
+    const originalTotal = Math.round(Object.values(originalMetrics).reduce((sum, val) => sum + val, 0) / Object.keys(originalMetrics).length);
+    const generatedTotal = Math.round(Object.values(generatedMetrics).reduce((sum, val) => sum + val, 0) / Object.keys(generatedMetrics).length);
+    
+    // Determine recommendation
+    const betterOption = generatedTotal > originalTotal ? 'AI-Generated' : 'Original';
+    const margin = Math.abs(generatedTotal - originalTotal);
+    let confidenceLevel;
+    
+    if (margin > 15) confidenceLevel = 'High';
+    else if (margin > 8) confidenceLevel = 'Medium';
+    else confidenceLevel = 'Low';
     
     // Create strength indicators
-    const getStrengths = (original, generated) => {
+    const getStrengths = (metrics1, metrics2) => {
       const strengths = [];
-      if (original.clarity > generated.clarity) strengths.push('Clearer');
-      if (original.specificity > generated.specificity) strengths.push('More specific');
-      if (original.relevance > generated.relevance) strengths.push('More relevant');
+      Object.keys(metrics1).forEach(key => {
+        if (metrics1[key] > metrics2[key] + 5) {
+          strengths.push(key.charAt(0).toUpperCase() + key.slice(1));
+        }
+      });
       return strengths;
     };
     
-    const originalStrengths = getStrengths(originalCriteria, generatedCriteria);
-    const generatedStrengths = getStrengths(generatedCriteria, originalCriteria);
+    const originalStrengths = getStrengths(originalMetrics, generatedMetrics);
+    const generatedStrengths = getStrengths(generatedMetrics, originalMetrics);
     
     // Get winner indicator
     const getWinner = (score1, score2) => {
-      if (score1 > score2) return 'winner';
+      if (score1 > score2 + 3) return 'winner';
       return '';
     };
     
-    modal.innerHTML = `
-      <div class="modal-content glass-card">
-        <div class="modal-header">
-          <h2>Quick Comparison</h2>
-          <button class="close-modal">&times;</button>
+    // Create gauge indicator
+    const createGaugeIndicator = (score) => {
+      const percentage = score;
+      let quality;
+      
+      if (percentage >= 85) quality = 'excellent';
+      else if (percentage >= 70) quality = 'good';
+      else if (percentage >= 50) quality = 'fair';
+      else quality = 'poor';
+      
+      return `
+        <div class="premium-progress-container">
+          <div class="premium-progress ${quality}">
+            <div class="premium-progress-fill" style="width: ${percentage}%"></div>
+            <div class="premium-progress-value">${percentage}</div>
+          </div>
+          <div class="premium-progress-label ${quality}">${quality}</div>
         </div>
-        <div class="modal-body">
+      `;
+    };
+    
+    // Format criteria names for display
+    const formatCriteriaName = (name) => {
+      const names = {
+        'precision': 'Precision & Specificity',
+        'structure': 'Structure & Organization',
+        'context': 'Context Provision',
+        'instruction': 'Instruction Clarity',
+        'constraints': 'Constraints & Guidelines'
+      };
+      return names[name] || name.charAt(0).toUpperCase() + name.slice(1);
+    };
+    
+    modal.innerHTML = `
+      <div class="modal-content glass-card premium-card">
+        <div class="modal-header premium-header">
+          <div class="premium-title">
+            <h2>Expert Prompt Analysis</h2>
+            <div class="premium-subtitle">Deep analysis based on 5 key metrics</div>
+          </div>
+          <button class="close-modal premium-close">&times;</button>
+        </div>
+        <div class="modal-body premium-body">
           <div class="simplified-comparison">
-            <div class="comparison-columns">
-              <div class="comparison-column ${getWinner(originalTotal, generatedTotal)}">
-                <div class="column-header">
-                  <h3>Original</h3>
-                  <div class="score-badge">${originalTotal}/30</div>
+            <div class="premium-overview">
+              <div class="premium-score-overview">
+                <div class="premium-score-card ${getWinner(originalTotal, generatedTotal)}">
+                  <div class="premium-score-title">Original</div>
+                  ${createGaugeIndicator(originalTotal)}
+                  <div class="premium-strengths">
+                    ${originalStrengths.length > 0 ? 
+                      `<div class="strengths-title">Key Strengths</div>
+                       <ul class="premium-strength-list">
+                        ${originalStrengths.map(s => `<li>${s}</li>`).join('')}
+                       </ul>` : 
+                      '<div class="no-strengths">No significant advantages</div>'}
+                  </div>
                 </div>
-                <ul class="strength-list">
-                  ${originalStrengths.map(s => `<li>${s}</li>`).join('') || '<li class="neutral">Standard format</li>'}
-                </ul>
+                
+                <div class="premium-comparison-divider">
+                  <div class="confidence-indicator ${confidenceLevel.toLowerCase()}">
+                    <div class="confidence-label">Confidence</div>
+                    <div class="confidence-level">${confidenceLevel}</div>
+                    <div class="margin-difference">${margin}% difference</div>
+                  </div>
+                </div>
+                
+                <div class="premium-score-card ${getWinner(generatedTotal, originalTotal)}">
+                  <div class="premium-score-title">AI-Generated</div>
+                  ${createGaugeIndicator(generatedTotal)}
+                  <div class="premium-strengths">
+                    ${generatedStrengths.length > 0 ? 
+                      `<div class="strengths-title">Key Strengths</div>
+                       <ul class="premium-strength-list">
+                        ${generatedStrengths.map(s => `<li>${s}</li>`).join('')}
+                       </ul>` : 
+                      '<div class="no-strengths">No significant advantages</div>'}
+                  </div>
+                </div>
               </div>
               
-              <div class="comparison-divider">
-                <div class="vs-badge">VS</div>
-              </div>
-              
-              <div class="comparison-column ${getWinner(generatedTotal, originalTotal)}">
-                <div class="column-header">
-                  <h3>AI-Generated</h3>
-                  <div class="score-badge">${generatedTotal}/30</div>
+              <div class="premium-recommendation">
+                <div class="recommendation-header">Expert Recommendation</div>
+                <div class="recommendation-content ${betterOption === 'AI-Generated' ? 'ai' : 'original'}">
+                  <div class="recommendation-icon">${betterOption === 'AI-Generated' ? '🤖' : '👤'}</div>
+                  <div class="recommendation-details">
+                    <div class="recommendation-choice"><strong>${betterOption}</strong> prompt is recommended</div>
+                    <div class="recommendation-explanation">
+                      ${betterOption === 'AI-Generated' ? 
+                        `The AI-generated prompt ${confidenceLevel === 'High' ? 'significantly outperforms' : 'outperforms'} your original prompt, particularly in ${generatedStrengths.slice(0, 2).join(' and ')}. ${confidenceLevel === 'Low' ? 'However, the margin is slim and both are viable options.' : ''}` : 
+                        `Your original prompt ${confidenceLevel === 'High' ? 'significantly outperforms' : 'outperforms'} the AI-generated version, particularly in ${originalStrengths.slice(0, 2).join(' and ')}. ${confidenceLevel === 'Low' ? 'However, the margin is slim and both are viable options.' : ''}`}
+                    </div>
+                  </div>
                 </div>
-                <ul class="strength-list">
-                  ${generatedStrengths.map(s => `<li>${s}</li>`).join('') || '<li class="neutral">Standard format</li>'}
-                </ul>
               </div>
             </div>
             
-            <div class="recommendation-bar ${recommendation === 'AI-Generated' ? 'ai' : 'original'}">
-              <div class="recommendation-icon">${recommendation === 'AI-Generated' ? '🤖' : '👤'}</div>
-              <div class="recommendation-text">
-                <strong>${recommendation}</strong> prompt recommended
+            <div class="premium-metrics-comparison">
+              <div class="metrics-header">Detailed Metrics Comparison</div>
+              <div class="metrics-content">
+                <table class="metrics-table">
+                  <thead>
+                    <tr>
+                      <th>Metric</th>
+                      <th>Original</th>
+                      <th>AI-Generated</th>
+                      <th>Difference</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${Object.keys(originalMetrics).map(key => {
+                      const diff = generatedMetrics[key] - originalMetrics[key];
+                      const winner = diff > 0 ? 'ai-win' : diff < 0 ? 'original-win' : '';
+                      return `
+                        <tr>
+                          <td>${formatCriteriaName(key)}</td>
+                          <td>
+                            <div class="score-pill">
+                              <div class="score-bar">
+                                <div class="score-fill" style="width: ${originalMetrics[key]}%"></div>
+                              </div>
+                              <div class="score-value">${originalMetrics[key]}</div>
+                            </div>
+                          </td>
+                          <td>
+                            <div class="score-pill">
+                              <div class="score-bar">
+                                <div class="score-fill" style="width: ${generatedMetrics[key]}%"></div>
+                              </div>
+                              <div class="score-value">${generatedMetrics[key]}</div>
+                            </div>
+                          </td>
+                          <td class="diff-cell ${winner}">
+                            ${diff > 0 ? '+' : ''}${diff}
+                          </td>
+                        </tr>
+                      `;
+                    }).join('')}
+                  </tbody>
+                </table>
               </div>
             </div>
             
-            <div class="view-details-wrapper">
-              <button class="view-details-btn">View Full Comparison</button>
-              <button class="view-prompts-btn">View Prompt Texts</button>
+            <div class="premium-actions">
+              <button class="premium-btn view-details-btn">View Prompt Text</button>
+              <button class="premium-btn export-btn">Export Analysis</button>
             </div>
           </div>
           
           <div class="detailed-comparison hidden">
             <div class="comparison-prompts">
-              <div class="prompt-container ${recommendation === 'Original' ? 'recommended' : ''}">
+              <div class="prompt-container ${betterOption === 'Original' ? 'recommended' : ''}">
                 <div class="prompt-header">
                   <h3>Original Prompt</h3>
-                  ${recommendation === 'Original' ? '<span class="recommendation-chip">Recommended</span>' : ''}
+                  ${betterOption === 'Original' ? '<span class="recommendation-chip">Recommended</span>' : ''}
                 </div>
                 <div class="prompt-content">${originalPrompt}</div>
               </div>
-              <div class="prompt-container ${recommendation === 'AI-Generated' ? 'recommended' : ''}">
+              <div class="prompt-container ${betterOption === 'AI-Generated' ? 'recommended' : ''}">
                 <div class="prompt-header">
                   <h3>AI-Generated Prompt</h3>
-                  ${recommendation === 'AI-Generated' ? '<span class="recommendation-chip">Recommended</span>' : ''}
+                  ${betterOption === 'AI-Generated' ? '<span class="recommendation-chip">Recommended</span>' : ''}
                 </div>
                 <div class="prompt-content">${generatedPrompt}</div>
               </div>
             </div>
             
-            <div class="comparison-chart-container hidden">
-              <div class="chart-wrapper">
-                <canvas id="comparisonRadarChart" width="300" height="300"></canvas>
-              </div>
-            </div>
-            
             <div class="back-to-summary">
-              <button class="back-summary-btn">← Back to Summary</button>
+              <button class="premium-btn back-summary-btn">← Back to Analysis</button>
             </div>
           </div>
         </div>
@@ -459,32 +746,13 @@ Respond ONLY with the optimized prompt. No explanations, no commentary, no intro
     
     // Toggle between summary and detailed view
     const viewDetailsBtn = modal.querySelector('.view-details-btn');
-    const viewPromptsBtn = modal.querySelector('.view-prompts-btn');
     const backSummaryBtn = modal.querySelector('.back-summary-btn');
     const simplifiedView = modal.querySelector('.simplified-comparison');
     const detailedView = modal.querySelector('.detailed-comparison');
-    const chartContainer = modal.querySelector('.comparison-chart-container');
-    const promptsView = modal.querySelector('.comparison-prompts');
     
     viewDetailsBtn.addEventListener('click', () => {
       simplifiedView.classList.add('hidden');
       detailedView.classList.remove('hidden');
-      chartContainer.classList.remove('hidden');
-      promptsView.classList.add('hidden');
-      
-      // Initialize chart when details are viewed
-      const canvas = document.getElementById('comparisonRadarChart');
-      if (canvas) {
-        const ctx = canvas.getContext('2d');
-        createRadarChart(ctx, originalCriteria, generatedCriteria);
-      }
-    });
-    
-    viewPromptsBtn.addEventListener('click', () => {
-      simplifiedView.classList.add('hidden');
-      detailedView.classList.remove('hidden');
-      chartContainer.classList.add('hidden');
-      promptsView.classList.remove('hidden');
     });
     
     backSummaryBtn.addEventListener('click', () => {
@@ -492,106 +760,39 @@ Respond ONLY with the optimized prompt. No explanations, no commentary, no intro
       detailedView.classList.add('hidden');
     });
     
+    // Handle export functionality
+    const exportBtn = modal.querySelector('.export-btn');
+    exportBtn.addEventListener('click', () => {
+      const analysisData = {
+        recommendation: betterOption,
+        confidence: confidenceLevel,
+        margin: margin,
+        metrics: {
+          original: originalMetrics,
+          generated: generatedMetrics
+        },
+        strengths: {
+          original: originalStrengths,
+          generated: generatedStrengths
+        }
+      };
+      
+      // Convert to JSON
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(analysisData, null, 2));
+      const downloadAnchorNode = document.createElement('a');
+      downloadAnchorNode.setAttribute("href", dataStr);
+      downloadAnchorNode.setAttribute("download", "prompt_analysis.json");
+      document.body.appendChild(downloadAnchorNode); // required for firefox
+      downloadAnchorNode.click();
+      downloadAnchorNode.remove();
+      
+      showToast('Analysis exported successfully');
+    });
+    
     // Animated entrance
     setTimeout(() => {
       modal.classList.add('show');
     }, 10);
-  }
-
-  // Function to create radar chart
-  function createRadarChart(ctx, originalCriteria, generatedCriteria) {
-    // Add Chart.js script if it doesn't exist
-    if (!window.Chart) {
-      const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
-      script.onload = () => {
-        initChart(ctx, originalCriteria, generatedCriteria);
-      };
-      document.head.appendChild(script);
-    } else {
-      initChart(ctx, originalCriteria, generatedCriteria);
-    }
-  }
-
-  function initChart(ctx, originalCriteria, generatedCriteria) {
-    new Chart(ctx, {
-      type: 'radar',
-      data: {
-        labels: ['Clarity', 'Specificity', 'Relevance'],
-        datasets: [
-          {
-            label: 'Original',
-            data: [
-              originalCriteria.clarity,
-              originalCriteria.specificity,
-              originalCriteria.relevance
-            ],
-            backgroundColor: 'rgba(67, 206, 162, 0.2)',
-            borderColor: 'rgba(67, 206, 162, 0.8)',
-            pointBackgroundColor: 'rgba(67, 206, 162, 1)',
-            pointBorderColor: '#fff',
-            pointHoverBackgroundColor: '#fff',
-            pointHoverBorderColor: 'rgba(67, 206, 162, 1)'
-          },
-          {
-            label: 'AI-Generated',
-            data: [
-              generatedCriteria.clarity,
-              generatedCriteria.specificity,
-              generatedCriteria.relevance
-            ],
-            backgroundColor: 'rgba(127, 95, 255, 0.2)',
-            borderColor: 'rgba(127, 95, 255, 0.8)',
-            pointBackgroundColor: 'rgba(127, 95, 255, 1)',
-            pointBorderColor: '#fff',
-            pointHoverBackgroundColor: '#fff',
-            pointHoverBorderColor: 'rgba(127, 95, 255, 1)'
-          }
-        ]
-      },
-      options: {
-        elements: {
-          line: {
-            borderWidth: 3
-          }
-        },
-        scales: {
-          r: {
-            angleLines: {
-              display: true,
-              color: 'rgba(255, 255, 255, 0.1)'
-            },
-            suggestedMin: 0,
-            suggestedMax: 10,
-            ticks: {
-              color: 'rgba(255, 255, 255, 0.7)',
-              backdropColor: 'transparent'
-            },
-            grid: {
-              color: 'rgba(255, 255, 255, 0.1)'
-            },
-            pointLabels: {
-              color: 'rgba(255, 255, 255, 0.9)',
-              font: {
-                size: 12
-              }
-            }
-          }
-        },
-        plugins: {
-          legend: {
-            position: 'bottom',
-            labels: {
-              color: 'rgba(255, 255, 255, 0.9)',
-              boxWidth: 12,
-              font: {
-                size: 11
-              }
-            }
-          }
-        }
-      }
-    });
   }
 
   // Copy button functionality
@@ -1392,119 +1593,6 @@ Respond ONLY with the optimized prompt. No explanations, no commentary, no intro
       const score = calculatePromptScore(promptText);
       displayScoreResults(score);
     }, 800);
-  }
-
-  function calculatePromptScore(promptText) {
-    // This would be a more sophisticated algorithm in production
-    // Current implementation uses basic heuristics
-    
-    const metrics = {
-      clarity: 0,
-      specificity: 0,
-      relevance: 0,
-      effectiveness: 0
-    };
-    
-    // Clarity - based on sentence structure, punctuation, and length
-    metrics.clarity = calculateClarity(promptText);
-    
-    // Specificity - based on detail words, numbers, context
-    metrics.specificity = calculateSpecificity(promptText);
-    
-    // Relevance - based on topic coherence
-    metrics.relevance = calculateRelevance(promptText);
-    
-    // Effectiveness - based on combination of other metrics
-    metrics.effectiveness = calculateEffectiveness(promptText, metrics);
-    
-    // Calculate final score (weighted average)
-    const totalScore = Math.round(
-      (metrics.clarity * 0.25) +
-      (metrics.specificity * 0.3) +
-      (metrics.relevance * 0.2) +
-      (metrics.effectiveness * 0.25)
-    );
-    
-    return {
-      score: totalScore,
-      breakdown: metrics
-    };
-  }
-
-  function calculateClarity(text) {
-    // Basic clarity metrics
-    const words = text.split(/\s+/).filter(w => w.length > 0);
-    const avgWordLength = words.join('').length / words.length;
-    const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
-    const avgSentenceLength = words.length / Math.max(1, sentences.length);
-    
-    // Penalize very long sentences and very short prompts
-    let clarityScore = 85;
-    if (avgSentenceLength > 25) clarityScore -= Math.min(30, (avgSentenceLength - 25) * 2);
-    if (words.length < 3) clarityScore -= Math.min(40, (3 - words.length) * 20);
-    if (avgWordLength > 8) clarityScore -= Math.min(20, (avgWordLength - 8) * 5);
-    
-    // Bonus for question marks, clear instructions
-    if (text.includes('?')) clarityScore += 5;
-    if (/please|explain|describe|list|summarize|analyze/i.test(text)) clarityScore += 5;
-    
-    return Math.min(100, Math.max(0, Math.round(clarityScore)));
-  }
-
-  function calculateSpecificity(text) {
-    // Basic specificity metrics
-    const words = text.split(/\s+/).filter(w => w.length > 0);
-    let specificityScore = 70;
-    
-    // Reward for length (up to a point)
-    if (words.length > 5) specificityScore += Math.min(15, (words.length - 5) * 1.5);
-    
-    // Reward for specific details
-    if (/\d+/.test(text)) specificityScore += 5; // Contains numbers
-    if (/\b(in|with|using|by|through|for)\b/i.test(text)) specificityScore += 5; // Contains prepositions
-    if (/\b(specifically|precisely|exactly|clearly|particular|detailed)\b/i.test(text)) specificityScore += 10;
-    
-    // Check for context indicators
-    if (/context|background|situation|scenario|case/i.test(text)) specificityScore += 5;
-    
-    // Reward for examples
-    if (/example|instance|such as|like|e\.g\./i.test(text)) specificityScore += 10;
-    
-    return Math.min(100, Math.max(0, Math.round(specificityScore)));
-  }
-
-  function calculateRelevance(text) {
-    // This would use more sophisticated NLP in production
-    // Here we use simple heuristics
-    const relevanceScore = 85;
-    
-    // Simple checks for common topics
-    const topics = [
-      /\b(ai|machine learning|artificial intelligence|model|gpt|llm|language model)\b/i,
-      /\b(code|programming|software|development|app|application)\b/i,
-      /\b(business|marketing|strategy|company|product|service)\b/i,
-      /\b(write|writing|content|article|essay|blog|text)\b/i,
-      /\b(analyze|analysis|review|evaluate|assessment)\b/i
-    ];
-    
-    let topicScore = 0;
-    topics.forEach(regex => {
-      if (regex.test(text)) topicScore += 3;
-    });
-    
-    return Math.min(100, Math.max(0, Math.round(relevanceScore + topicScore)));
-  }
-
-  function calculateEffectiveness(text, metrics) {
-    // Effectiveness is partially derived from other metrics
-    let effectivenessScore = (metrics.clarity + metrics.specificity + metrics.relevance) / 3;
-    
-    // Adjust based on prompt structure
-    if (text.endsWith('?')) effectivenessScore += 5;
-    if (/^(explain|describe|analyze|summarize|list|identify)/i.test(text)) effectivenessScore += 5;
-    if (/\bstep by step\b|\bin detail\b/i.test(text)) effectivenessScore += 5;
-    
-    return Math.min(100, Math.max(0, Math.round(effectivenessScore)));
   }
 
   function displayScoreResults(scoreData) {
