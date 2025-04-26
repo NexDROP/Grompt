@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          model: "llama3-70b-8192",
+          model: "deepseek-r1-distill-llama-70b",
           messages: [{
             role: "system",
             content: `You are PROMPT ENGINEER GPT, the world's most skilled prompt engineer.
