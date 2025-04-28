@@ -168,6 +168,168 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('gromptHistory', JSON.stringify(savedPrompts));
   }
 
+  // Configuration for prompt enhancement
+  const promptEnhancementConfig = {
+    maxBaseLength: 150,
+    trendsRefreshInterval: 86400000, // 24 hours in milliseconds
+    promptPatterns: {
+      trending: [
+        "Explain like I'm five: {topic}",
+        "Create a step-by-step guide for {topic}",
+        "Compare and contrast {topic} with {related_topic}",
+        "What if {hypothetical_scenario} happened with {topic}?"
+      ],
+      effective: [
+        "{action_verb} {specific_task} for {target_audience}",
+        "Design a {timeframe} plan for {goal} without {common_obstacle}",
+        "Generate {number} unique approaches to solve {problem}"
+      ]
+    }
+  };
+
+  // Fetch trending topics to incorporate into prompts
+  async function fetchTrendingTopics() {
+    try {
+      // Replace with your actual trending topics API
+      const response = await fetch('https://api.yourtrendingservice.com/topics');
+      const data = await response.json();
+      localStorage.setItem('trendingTopics', JSON.stringify(data));
+      localStorage.setItem('trendsLastFetched', Date.now());
+      return data;
+    } catch (error) {
+      console.error('Error fetching trending topics:', error);
+      return [];
+    }
+  }
+
+  // Enhance generated prompts
+  function enhancePrompt(originalPrompt) {
+    // Get trending topics or use cached ones
+    let trendingTopics = [];
+    const lastFetched = localStorage.getItem('trendsLastFetched');
+    
+    if (!lastFetched || Date.now() - lastFetched > promptEnhancementConfig.trendsRefreshInterval) {
+      fetchTrendingTopics().then(topics => {
+        trendingTopics = topics;
+      });
+    } else {
+      trendingTopics = JSON.parse(localStorage.getItem('trendingTopics') || '[]');
+    }
+    
+    // Core enhancement logic
+    let enhancedPrompt = originalPrompt;
+    
+    // Make it more specific
+    enhancedPrompt = makePromptSpecific(enhancedPrompt);
+    
+    // Add trending elements if appropriate
+    if (shouldIncludeTrends(enhancedPrompt)) {
+      enhancedPrompt = incorporateTrends(enhancedPrompt, trendingTopics);
+    }
+    
+    // Optimize prompt length
+    enhancedPrompt = optimizePromptLength(enhancedPrompt);
+    
+    return enhancedPrompt;
+  }
+
+  function makePromptSpecific(prompt) {
+    // Replace vague terms with specific ones
+    const vagueTerms = {
+      'good': ['effective', 'high-quality', 'valuable'],
+      'bad': ['ineffective', 'problematic', 'counterproductive'],
+      'thing': ['component', 'element', 'factor'],
+      'make': ['create', 'develop', 'produce', 'design']
+    };
+    
+    let specificPrompt = prompt;
+    
+    Object.entries(vagueTerms).forEach(([vague, specific]) => {
+      const regex = new RegExp(`\\b${vague}\\b`, 'gi');
+      if (regex.test(specificPrompt)) {
+        specificPrompt = specificPrompt.replace(regex, specific[Math.floor(Math.random() * specific.length)]);
+      }
+    });
+    
+    return specificPrompt;
+  }
+
+  function shouldIncludeTrends(prompt) {
+    // Determine if this prompt would benefit from trending topics
+    return !prompt.includes("historical") && 
+           !prompt.includes("classic") && 
+           prompt.length < 100;
+  }
+
+  function incorporateTrends(prompt, trendingTopics) {
+    if (!trendingTopics.length) return prompt;
+    
+    // Select a trending topic relevant to the prompt
+    const relevantTopic = trendingTopics.find(topic => 
+      prompt.toLowerCase().includes(topic.category.toLowerCase())
+    ) || trendingTopics[0];
+    
+    // Choose a trending pattern and apply it
+    const patterns = promptEnhancementConfig.promptPatterns.trending;
+    const selectedPattern = patterns[Math.floor(Math.random() * patterns.length)];
+    
+    return selectedPattern
+      .replace('{topic}', prompt)
+      .replace('{related_topic}', relevantTopic.name)
+      .replace('{hypothetical_scenario}', getRandomScenario());
+  }
+
+  function optimizePromptLength(prompt) {
+    if (prompt.length <= promptEnhancementConfig.maxBaseLength) return prompt;
+    
+    // Remove redundancies
+    let optimized = prompt
+      .replace(/\b(in order to|due to the fact that)\b/g, 'to')
+      .replace(/\b(at this point in time)\b/g, 'now')
+      .replace(/\b(for the purpose of)\b/g, 'for')
+      .replace(/\b(in the event that)\b/g, 'if');
+    
+    // Truncate if still too long
+    if (optimized.length > promptEnhancementConfig.maxBaseLength) {
+      optimized = optimized.substring(0, promptEnhancementConfig.maxBaseLength) + '...';
+    }
+    
+    return optimized;
+  }
+
+  // Add this where you process generated prompts
+  function processAIResponse(response) {
+    // Default to concise output
+    let processedResponse = response.trim();
+    
+    // Determine if expanded response is needed based on complexity
+    const needsExpansion = response.includes("complex") || 
+                           response.includes("explain") || 
+                           response.includes("detail");
+    
+    if (!needsExpansion && processedResponse.length > 150) {
+      // Shorten response when possible
+      processedResponse = processedResponse
+        .split('. ')
+        .slice(0, 2)
+        .join('. ') + '.';
+    }
+    
+    return processedResponse;
+  }
+
+  // Helpers
+  function getRandomScenario() {
+    const scenarios = [
+      "sudden technological breakthrough",
+      "global policy change",
+      "unexpected discovery",
+      "market disruption",
+      "paradigm shift"
+    ];
+    return scenarios[Math.floor(Math.random() * scenarios.length)];
+  }
+
   // Generate prompt using Groq API
   async function generatePrompt(idea) {
     const GROQ_API_KEY = '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';
