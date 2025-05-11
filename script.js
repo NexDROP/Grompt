@@ -388,8 +388,10 @@ Example: Create a photorealistic scene of indore's Rajwada encapsulated inside a
 
 Example: Create an Image a cheerful 3D cartoon boy sitting on a colorful Instagram cube, wearing Dior t-shirt, Dior shorts, and Gucci sneakers, taking a selfie with an iPhone 14 Pro, with a giant smartphone screen behind him displaying his Instagram profile, realistic textures and vibrant lighting.
 
-Example: Make 3D Chibi boy is Sitting on top of the letter 'Abhiiii' Cute Form blocky style in contrast with 'wine' background make it Stunning. Face is as per uploaded image, wearing same outfit and charming, cute, expressive.             
-          }, {
+Example: Make 3D Chibi boy is Sitting on top of the letter 'Abhiiii' Cute Form blocky style in contrast with 'wine' background make it Stunning. Face is as per uploaded image, wearing same outfit and charming, cute, expressive.`           
+          },
+          
+          {
             role: "user",
             content: `Create the most effective prompt for: ${idea}`
           }],
