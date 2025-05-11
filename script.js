@@ -363,7 +363,32 @@ Input: "Tell me about Rome"
 BAD OUTPUT: "Rome is the capital city of Italy with a rich history..."
 GOOD OUTPUT: "Provide a comprehensive overview of Rome, Italy. Include its historical significance from founding to modern day, major architectural landmarks, cultural importance, and current role in global affairs. Structure the response with clear headings, beginning with a brief executive summary followed by chronological historical sections. Include specific dates and names of key historical figures."
 
-Respond ONLY with the optimized prompt. No explanations, no commentary, no introductions.`
+Here is some more examples of how you will make prompts if the input includes image or Create an image, Remember, these are only examples and you should be inspired from these to develop a understanding and get intelligent in making image prompts:
+
+Example: A stylized 3D chibi-style cute girl leans casually against a small three-dimensional name [your name]' designed in sleek black and red. She has long black hair and a playful smile. She is dressed in a maroon kurti with a printed dupatta, matching the exact outfit in the reference image, paired with black pants and high-heeled sandals. The background is a dark bedroom, enhancing the vibrant colors and cozy atmosphere of the scene.
+Respond ONLY with the optimized prompt. No explanations, no commentary, no introductions.
+
+Example: Create a stylized portrait of (image attached) in the artistic style of the Grand Theft Auto V loading screen. The person wears the same clothes as in the attached photo and wears a confident expression. Neon lights, palm trees and vintage movie signs make up the background. Include soft purple sunset lighting and a cinematic atmosphere. A shading of cartoon style and uncluttered contours, in the aesthetics of Rockstar Games illustrations.
+
+Example: The image you provided shows a hand holding a photo frame that aligns perfectly with the background scene. Inside the frame, there is a digitally rendered cartoon-style girl in traditional Indian attire (teal dress with gold trim), styled with jewelry and a braid, sitting on a street ledge. The creative blend of real-world photography and animation makes it a charming and imaginative composition.
+
+Example: Create a 1:1 poster of [product or brand name], where half of the product is photorealistic and the other half transforms into flat digital elements like UI fragments, abstract tech shapes, or minimal glitch effects.
+Use bold double-exposure text that reflects the product’s identity, with clean minimal background matching the brand color.
+The product should be fully visible in the center, uncut, with cinematic lighting, 3D style, and the brand logo placed professionally in the corner.
+
+Example: Draw an action figure (Barbie-type doll) of the person in this photo. The figure must be full-body and in its original blister packaging. The name of the toy appears at the top of the box "add name" with the headline "headline" in a single line of text. On the blister packaging, next to the figure, show the toy's accessories, including - add accessories"
+
+Example: Create an ultra-realistic close-up portrait in 9:16 of me (faceas per uploaded image) and anime character (naruto and family). All of us should make silly facial expressions. Background is an empty small living room with bright white finish. High angle view. Use an environmental extreme fisheye perspective to capture our entire bodies in motion.
+
+Example: A top-down photo of two popular books, "[Book Title 1]" and "[Book Title 2]," placed side by side on a glass whiteboard. Hand-drawn arrows and thoughtful captions link the two books. Above them, include a powerful, insightful statement that reveals the shared concept or deeper theme they both explore. The covers should be clearly visible, with soft, natural lighting and a clean, professional look.
+
+Example: A professional Panini-style photo of a soccer card featuring legend Lionel Messi wearing his iconic blue and white striped Argentina jersey. In a dramatic moment, Messi kicks the ball with force, breaking the boundaries of the card—making it explode into fragments. The card explodes into reality as Messi emerges from the 2D surface into the 3D world. In the foreground, a soccer ball spins at high speed, out of focus toward the viewer. The background shows the torn remains of the card against a dark backdrop, while aurora-like beams of light radiate from the torn card, creating a surreal and powerful dimensional crossing effect.
+
+Example: Create a photorealistic scene of indore's Rajwada encapsulated inside a transparent pill capsule, placed on a cool beach. The capsule should have the name of the city Indore printed on it in clean, bold font. Inside the capsule, include detailed, miniature versions of Indore's rajwada. The capsule should be illuminated with soft, cinematic lighting that enhances the brand details. The background should feature a serene beach with soft waves, and the reflection of the capsule on the wet sand should be clearly visible, creating a dreamlike, imaginative atmosphere.
+
+Example: Create an Image a cheerful 3D cartoon boy sitting on a colorful Instagram cube, wearing Dior t-shirt, Dior shorts, and Gucci sneakers, taking a selfie with an iPhone 14 Pro, with a giant smartphone screen behind him displaying his Instagram profile, realistic textures and vibrant lighting.
+
+Example: Make 3D Chibi boy is Sitting on top of the letter 'Abhiiii' Cute Form blocky style in contrast with 'wine' background make it Stunning. Face is as per uploaded image, wearing same outfit and charming, cute, expressive.             
           }, {
             role: "user",
             content: `Create the most effective prompt for: ${idea}`
